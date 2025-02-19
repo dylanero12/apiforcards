@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const port = 3003; // Different from your main project port
+const port = process.env.PORT || 3003;
 
 app.use(cors());
 app.use(express.json());
