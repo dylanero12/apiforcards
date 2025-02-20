@@ -54,7 +54,8 @@
             "name": "Blade",
             "imageUrl": "https://static.wikia.nocookie.net/houkai-star-rail/images/f/fb/Light_Cone_The_Unreachable_Side_Artwork.png",
             "description": "A member of the Stellaron Hunters, and a swordsman who abandoned his body to become a blade. Pledges loyalty to 'Destiny's Slave,' and possesses a terrifying self-healing ability.",
-            "defeatMusic": "https://apiforcards-k9iu.vercel.app/music/spotidownloader.com - Death Approaches - HOYO-MiX.mp3"
+            "defeatMusic": "https://apiforcards-k9iu.vercel.app/music/spotidownloader.com - Death Approaches - HOYO-MiX.mp3",
+            "defeatVideo": "https://apiforcards-k9iu.vercel.app/videos/blade.mp4"
         },
         {
             "id": 9,
