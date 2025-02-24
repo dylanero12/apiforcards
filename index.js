@@ -6,7 +6,18 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3003;
 
-app.use(cors());
+// Configure CORS
+app.use(cors({
+  origin: [
+    'https://card-memorygame-qadxca7zm-dylanero12s-projects.vercel.app',
+    'http://localhost:3000',  // For local development
+    'http://localhost:5173'   // For Vite's default port
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.static('public'));
 
