@@ -62,19 +62,32 @@ const loadCharacters = () => {
 // Get all characters with optional limit
 app.get('/api/characters', (req, res) => {
     try {
+        console.log('Fetching characters...');
         const characters = loadCharacters();
+        console.log(`Loaded ${characters.length} characters`);
+        
         const limit = parseInt(req.query.limit) || characters.length;
+        console.log(`Requested limit: ${limit}`);
         
         // First shuffle all characters
         const shuffledCharacters = shuffleArray([...characters]);
         
         // Then take the first 'limit' characters
         const result = shuffledCharacters.slice(0, limit);
+        console.log(`Returning ${result.length} characters`);
         
+        // Set explicit headers
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        
+        // Send the response
         res.json(result);
     } catch (error) {
-        console.error('Error loading characters:', error);
-        res.status(500).json({ error: 'Failed to load characters' });
+        console.error('Error in /api/characters:', error);
+        res.status(500).json({ 
+            error: 'Failed to load characters',
+            details: error.message 
+        });
     }
 });
 
