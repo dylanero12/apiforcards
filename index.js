@@ -31,6 +31,10 @@ app.use('/music', express.static(path.join(__dirname, 'public/music'), {
     }
   }
 }));
+app.use('/health', (req, res) => {
+  res.set('Content-Type', 'text/plain');
+  res.send('OK');
+});
 
 app.use('/videos', express.static(path.join(__dirname, 'public/videos'), {
   setHeaders: (res, path) => {
