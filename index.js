@@ -6,23 +6,8 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3003;
 
-// Configure CORS to allow requests from your game's domain
-app.use(cors({
-  origin: [
-    'https://card-memorygame-c1wtwstp9-dylanero12s-projects.vercel.app',
-    'https://card-memorygame-cpl5fzvii-dylanero12s-projects.vercel.app',
-    'https://card-memorygame.vercel.app',
-    'https://card-memorygame-*.vercel.app',
-    'http://localhost:3000',
-    'http://localhost:5173'
-  ],
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type'],
-  credentials: true
-}));
-
-// Enable CORS preflight for all routes
-app.options('*', cors());
+// Allow all origins
+app.use(cors());
 
 app.use(express.json());
 app.use(express.static('public'));
