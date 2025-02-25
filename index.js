@@ -6,18 +6,14 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3003;
 
-// CORS configuration
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
-
-// Handle OPTIONS requests
-app.options('*', (req, res) => {
-  res.status(200).end();
-});
+// Enable CORS for all routes
+app.use(cors({
+  origin: true, // Allow all origins
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200
+}));
 
 app.use(express.json());
 app.use(express.static('public'));
@@ -31,6 +27,7 @@ app.use('/music', express.static(path.join(__dirname, 'public/music'), {
     }
   }
 }));
+
 app.use('/health', (req, res) => {
   res.set('Content-Type', 'text/plain');
   res.send('OK');
@@ -45,6 +42,20 @@ app.use('/videos', express.static(path.join(__dirname, 'public/videos'), {
     }
   }
 }));
+
+// Add CORS headers to all responses
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', true);
+  
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
 
 // Load characters from JSON file
 const loadCharacters = () => {
