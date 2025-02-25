@@ -76,12 +76,16 @@ app.get('/api/characters', (req, res) => {
         const result = shuffledCharacters.slice(0, limit);
         console.log(`Returning ${result.length} characters`);
         
-        // Set explicit headers
-        res.setHeader('Content-Type', 'application/json');
+        // Set comprehensive headers
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('X-Content-Type-Options', 'nosniff');
         
         // Send the response
-        res.json(result);
+        res.status(200).json(result);
     } catch (error) {
         console.error('Error in /api/characters:', error);
         res.status(500).json({ 
