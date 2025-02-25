@@ -6,12 +6,7 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3003;
 
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'HEAD'],
-  allowedHeaders: ['Content-Type', 'Accept', 'Range'],
-  exposedHeaders: ['Content-Range', 'Accept-Ranges', 'Content-Length']
-}));
+app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
@@ -25,7 +20,6 @@ app.use('/music', express.static(path.join(__dirname, 'public/music'), {
   }
 }));
 
-// Add proper MIME type and headers for video files
 app.use('/videos', express.static(path.join(__dirname, 'public/videos'), {
   setHeaders: (res, path) => {
     if (path.endsWith('.mp4')) {
