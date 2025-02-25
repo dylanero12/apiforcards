@@ -6,12 +6,31 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3003;
 
-// Enable CORS for all routes
+// Define allowed origins
+const allowedOrigins = [
+  'https://card-memorygame-ecnn00hzn-dylanero12s-projects.vercel.app',
+  'https://card-memorygame-cpl5fzvii-dylanero12s-projects.vercel.app',
+  'https://card-memorygame-m3xfpbp07-dylanero12s-projects.vercel.app',
+  'http://localhost:3000',
+  'http://localhost:5173'
+];
+
+// Enable CORS for specific origins
 app.use(cors({
-  origin: true, // Allow all origins
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      console.log('Origin attempted:', origin); // Log attempted origins
+      // Allow the origin anyway for now (development mode)
+      return callback(null, true);
+    }
+    return callback(null, true);
+  },
   methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
+  allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'Origin', 'X-Requested-With'],
+  credentials: false,
   optionsSuccessStatus: 200
 }));
 
@@ -45,10 +64,14 @@ app.use('/videos', express.static(path.join(__dirname, 'public/videos'), {
 
 // Add CORS headers to all responses
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  } else {
+    res.header('Access-Control-Allow-Origin', '*');
+  }
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', true);
   
   // Handle preflight
   if (req.method === 'OPTIONS') {
