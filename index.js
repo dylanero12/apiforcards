@@ -49,7 +49,7 @@ app.use('/videos', express.static(path.join(__dirname, 'public/videos'), {
 
 app.use('/health', (req, res) => {
   res.set('Content-Type', 'text/plain');
-  res.send('OK');
+  res.send('OK2');
 });
 
 // Load characters from JSON file
