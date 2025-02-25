@@ -6,7 +6,24 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3003;
 
-app.use(cors());
+// Middleware to enable CORS
+const allowCors = fn => async (req, res) => {
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  return await fn(req, res);
+};
+
 app.use(express.json());
 app.use(express.static('public'));
 
@@ -26,6 +43,21 @@ app.use('/health', (req, res) => {
   res.send('OK2');
 });
 
+app.use('/videos', express.static(path.join(__dirname, 'public/videos'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.mp4')) {
+      res.set('Content-Type', 'video/mp4');
+      res.set('Accept-Ranges', 'bytes');
+      res.set('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+    }
+  }
+}));
+
+app.use('/health', (req, res) => {
+  res.set('Content-Type', 'text/plain');
+  res.send('OK2');
+});
+
 // Load characters from JSON file
 const loadCharacters = () => {
     const filePath = path.join(__dirname, 'data', 'characters.json');
@@ -33,36 +65,29 @@ const loadCharacters = () => {
     return JSON.parse(rawData).characters;
 };
 
-// Get a random character
-app.get('/api/character/random', (req, res) => {
+// Wrap API routes with CORS middleware
+app.get('/api/characters', allowCors(async (req, res) => {
+    const characters = loadCharacters();
+    const limit = parseInt(req.query.limit) || characters.length;
+    const shuffledCharacters = shuffleArray([...characters]);
+    const result = shuffledCharacters.slice(0, limit);
+    res.json(result);
+}));
+
+app.get('/api/character/random', allowCors(async (req, res) => {
     const characters = loadCharacters();
     const randomIndex = Math.floor(Math.random() * characters.length);
     res.json(characters[randomIndex]);
-});
+}));
 
-// Get a specific character by ID
-app.get('/api/character/:id', (req, res) => {
+app.get('/api/character/:id', allowCors(async (req, res) => {
     const characters = loadCharacters();
     const character = characters.find(c => c.id === parseInt(req.params.id));
     if (!character) {
         return res.status(404).json({ message: "Character not found" });
     }
     res.json(character);
-});
-
-// Get all characters with optional limit
-app.get('/api/characters', (req, res) => {
-    const characters = loadCharacters();
-    const limit = parseInt(req.query.limit) || characters.length;
-    
-    // First shuffle all characters
-    const shuffledCharacters = shuffleArray([...characters]);
-    
-    // Then take the first 'limit' characters
-    const result = shuffledCharacters.slice(0, limit);
-    
-    res.json(result);
-});
+}));
 
 // Helper function to shuffle array
 const shuffleArray = (array) => {
