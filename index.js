@@ -20,6 +20,12 @@ app.use('/music', express.static(path.join(__dirname, 'public/music'), {
   }
 }));
 
+
+app.use('/health', (req, res) => {
+  res.set('Content-Type', 'text/plain');
+  res.send('OK2');
+});
+
 // Load characters from JSON file
 const loadCharacters = () => {
     const filePath = path.join(__dirname, 'data', 'characters.json');
