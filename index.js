@@ -6,34 +6,10 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3003;
 
-// Define allowed origins
-const allowedOrigins = [
-  'https://card-memorygame-ecnn00hzn-dylanero12s-projects.vercel.app',
-  'https://card-memorygame-cpl5fzvii-dylanero12s-projects.vercel.app',
-  'https://card-memorygame-m3xfpbp07-dylanero12s-projects.vercel.app',
-  'http://localhost:3000',
-  'http://localhost:5173'
-];
+// Simplest possible CORS setup
+app.use(cors());
 
-// Enable CORS for specific origins
-app.use(cors({
-  origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) === -1) {
-      console.log('Origin attempted:', origin); // Log attempted origins
-      // Allow the origin anyway for now (development mode)
-      return callback(null, true);
-    }
-    return callback(null, true);
-  },
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'Origin', 'X-Requested-With'],
-  credentials: false,
-  optionsSuccessStatus: 200
-}));
-
+// Basic middleware
 app.use(express.json());
 app.use(express.static('public'));
 
@@ -62,30 +38,21 @@ app.use('/videos', express.static(path.join(__dirname, 'public/videos'), {
   }
 }));
 
-// Add CORS headers to all responses
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  } else {
-    res.header('Access-Control-Allow-Origin', '*');
-  }
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  
-  // Handle preflight
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  next();
-});
-
 // Load characters from JSON file
 const loadCharacters = () => {
     const filePath = path.join(__dirname, 'data', 'characters.json');
     const rawData = fs.readFileSync(filePath);
     return JSON.parse(rawData).characters;
 };
+
+// Get all characters with optional limit
+app.get('/api/characters', (req, res) => {
+    const characters = loadCharacters();
+    const limit = parseInt(req.query.limit) || characters.length;
+    const shuffledCharacters = shuffleArray([...characters]);
+    const result = shuffledCharacters.slice(0, limit);
+    res.json(result);
+});
 
 // Get a random character
 app.get('/api/character/random', (req, res) => {
@@ -102,20 +69,6 @@ app.get('/api/character/:id', (req, res) => {
         return res.status(404).json({ message: "Character not found" });
     }
     res.json(character);
-});
-
-// Get all characters with optional limit
-app.get('/api/characters', (req, res) => {
-    const characters = loadCharacters();
-    const limit = parseInt(req.query.limit) || characters.length;
-    
-    // First shuffle all characters
-    const shuffledCharacters = shuffleArray([...characters]);
-    
-    // Then take the first 'limit' characters
-    const result = shuffledCharacters.slice(0, limit);
-    
-    res.json(result);
 });
 
 // Helper function to shuffle array
