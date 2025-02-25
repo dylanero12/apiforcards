@@ -45,6 +45,20 @@ const loadCharacters = () => {
     return JSON.parse(rawData).characters;
 };
 
+// Get all characters with optional limit
+app.get('/api/characters', (req, res) => {
+    const characters = loadCharacters();
+    const limit = parseInt(req.query.limit) || characters.length;
+    
+    // First shuffle all characters
+    const shuffledCharacters = shuffleArray([...characters]);
+    
+    // Then take the first 'limit' characters
+    const result = shuffledCharacters.slice(0, limit);
+    
+    res.json(result);
+});
+
 // Get a random character
 app.get('/api/character/random', (req, res) => {
     const characters = loadCharacters();
@@ -60,20 +74,6 @@ app.get('/api/character/:id', (req, res) => {
         return res.status(404).json({ message: "Character not found" });
     }
     res.json(character);
-});
-
-// Get all characters with optional limit
-app.get('/api/characters', (req, res) => {
-    const characters = loadCharacters();
-    const limit = parseInt(req.query.limit) || characters.length;
-    
-    // First shuffle all characters
-    const shuffledCharacters = shuffleArray([...characters]);
-    
-    // Then take the first 'limit' characters
-    const result = shuffledCharacters.slice(0, limit);
-    
-    res.json(result);
 });
 
 // Helper function to shuffle array
