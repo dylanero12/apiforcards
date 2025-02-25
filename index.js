@@ -20,6 +20,21 @@ app.use('/music', express.static(path.join(__dirname, 'public/music'), {
   }
 }));
 
+app.use('/videos', express.static(path.join(__dirname, 'public/videos'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.mp4')) {
+      res.set('Content-Type', 'video/mp4');
+      res.set('Accept-Ranges', 'bytes');
+      res.set('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+    }
+  }
+}));
+
+app.use('/health', (req, res) => {
+  res.set('Content-Type', 'text/plain');
+  res.send('OK2');
+});
+
 // Load characters from JSON file
 const loadCharacters = () => {
     const filePath = path.join(__dirname, 'data', 'characters.json');
@@ -29,10 +44,12 @@ const loadCharacters = () => {
 
 // Get a random character
 app.get('/api/character/random', (req, res) => {
+
+app.get('/api/character/random', allowCors(async (req, res) => {
     const characters = loadCharacters();
     const randomIndex = Math.floor(Math.random() * characters.length);
     res.json(characters[randomIndex]);
-});
+}));
 
 // Get a specific character by ID
 app.get('/api/character/:id', (req, res) => {
