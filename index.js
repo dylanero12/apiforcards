@@ -44,12 +44,10 @@ const loadCharacters = () => {
 
 // Get a random character
 app.get('/api/character/random', (req, res) => {
-
-app.get('/api/character/random', allowCors(async (req, res) => {
     const characters = loadCharacters();
     const randomIndex = Math.floor(Math.random() * characters.length);
     res.json(characters[randomIndex]);
-}));
+});
 
 // Get a specific character by ID
 app.get('/api/character/:id', (req, res) => {
