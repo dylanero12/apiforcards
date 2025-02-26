@@ -76,7 +76,8 @@
             "name": "Aventurine",
             "imageUrl": "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2024/04/aventurine-trailer-_the-golden-touch_-_-honkai_-star-rail-1.jpg",
             "description": "A senior manager in the IPC Strategic Investment Department and one of the Ten Stonehearts. His Cornerstone is the 'Aventurine of Stratagems'. He possesses an air of frivolity and doesn't shy away from taking risks. His constant smile makes it difficult for people to discern his true feelings.He won his current position by wagering against fate itself. He views life as a high-stakes, high-return investment, and he plays this particular gamble with masterful ease.",
-            "defeatMusic": "/music/spotidownloader.com - The Golden Touch - HOYO-MiX.mp3"
+            "defeatMusic": "/music/spotidownloader.com - The Golden Touch - HOYO-MiX.mp3",
+            "defeatVideo": "/videos/aventurine.mp4"
         },
         {
             "id": 12,
