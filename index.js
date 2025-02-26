@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+// Load environment variables from .env file
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3003;
@@ -65,19 +67,47 @@ const loadCharacters = () => {
     return JSON.parse(rawData).characters;
 };
 
+// Helper function to add full URLs to media paths
+const addFullUrls = (characters, req) => {
+    const baseUrl = process.env.API_URL || `${req.protocol}://${req.get('host')}`;
+    
+    return characters.map(char => {
+        const updatedChar = { ...char };
+        
+        if (updatedChar.defeatMusic) {
+            updatedChar.defeatMusic = `${baseUrl}${updatedChar.defeatMusic}`;
+        }
+        
+        if (updatedChar.defeatVideo) {
+            updatedChar.defeatVideo = `${baseUrl}${updatedChar.defeatVideo}`;
+        }
+        
+        return updatedChar;
+    });
+};
+
 // Wrap API routes with CORS middleware
 app.get('/api/characters', allowCors(async (req, res) => {
     const characters = loadCharacters();
     const limit = parseInt(req.query.limit) || characters.length;
     const shuffledCharacters = shuffleArray([...characters]);
     const result = shuffledCharacters.slice(0, limit);
-    res.json(result);
+    
+    // Add full URLs to media paths
+    const charactersWithFullUrls = addFullUrls(result, req);
+    
+    res.json(charactersWithFullUrls);
 }));
 
 app.get('/api/character/random', allowCors(async (req, res) => {
     const characters = loadCharacters();
     const randomIndex = Math.floor(Math.random() * characters.length);
-    res.json(characters[randomIndex]);
+    const character = characters[randomIndex];
+    
+    // Add full URLs to media paths
+    const characterWithFullUrls = addFullUrls([character], req)[0];
+    
+    res.json(characterWithFullUrls);
 }));
 
 app.get('/api/character/:id', allowCors(async (req, res) => {
@@ -86,7 +116,11 @@ app.get('/api/character/:id', allowCors(async (req, res) => {
     if (!character) {
         return res.status(404).json({ message: "Character not found" });
     }
-    res.json(character);
+    
+    // Add full URLs to media paths
+    const characterWithFullUrls = addFullUrls([character], req)[0];
+    
+    res.json(characterWithFullUrls);
 }));
 
 // Helper function to shuffle array

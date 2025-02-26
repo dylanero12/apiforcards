@@ -11,5 +11,8 @@
       "src": "/(.*)",
       "dest": "/index.js"
     }
-  ]
+  ],
+  "env": {
+    "API_URL": "https://apiforcards-k9iu.vercel.app"
+  }
 } 
