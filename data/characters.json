@@ -20,14 +20,16 @@
             "name": "Kafka",
             "imageUrl": "https://www.dexerto.com/cdn-image/wp-content/uploads/2023/07/08/Kafka-Honkai-Star-Rail-guide.jpg",
             "description": "A member of the Stellaron Hunters who is calm, collected, and beautiful. Her record on the wanted list of the Interastral Peace Corporation only lists her name and her hobby. People have always imagined her to be elegant, respectable, and in pursuit of things of beauty even in combat.",
-            "defeatMusic": "/music/spotidownloader.com - A Dramatic Irony - HOYO-MiX-[AudioTrimmer.com].mp3"
+            "defeatMusic": "/music/spotidownloader.com - A Dramatic Irony - HOYO-MiX-[AudioTrimmer.com].mp3",
+            "defeatVideo": "/videos/kafka.mp4"
         },
         {
             "id": 4,
             "name": "Neuvillette",
             "imageUrl": "https://keqingmains.com/wp-content/uploads/2024/03/FAQ-Image.webp",
             "description": "Neuvillette is the Iudex of Fontaine, and the leader of the Marechaussee Phantom. While Neuvillette upholds the rules of the court with utmost reverence, he is quite aloof when dealing with human emotions and often distances himself from the public eye.",
-            "defeatMusic": "/music/spotidownloader.com - Parousia Diluvi - HOYO-MiX-[AudioTrimmer.com].mp3"
+            "defeatMusic": "/music/spotidownloader.com - Parousia Diluvi - HOYO-MiX-[AudioTrimmer.com].mp3",
+            "defeatVideo": "/videos/neuvillette.mp4"
         },
         {
             "id": 5,
