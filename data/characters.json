@@ -5,7 +5,8 @@
             "name": "Boothill",
             "imageUrl": "https://assetsio.gnwcdn.com/Honkai-Star-Rail-Boothill-materials%2C-kit%2C-and-Eidolons-cover.jpg?width=2000&height=1125&fit=crop&quality=100&format=png&enable=upscale&auto=webp",
             "description": "A cyborg cowboy drifting among the stars. Extremely optimistic and unrestrained. He is a member of the Galaxy Rangers who swore to punish the wretched by any and all means... His flamboyant and brash actions were all to draw the attention of the Interastral Peace Corporation — the target of his revenge.",
-            "defeatMusic": "/music/spotidownloader.com - Cowboy's Got Business - HOYO-MiX-[AudioTrimmer.com].mp3"
+            "defeatMusic": "/music/spotidownloader.com - Cowboy's Got Business - HOYO-MiX-[AudioTrimmer.com].mp3",
+            "defeatVideo": "/videos/boothill.mp4"
         },
         {
             "id": 2,
@@ -46,8 +47,9 @@
             "id": 7,
             "name": "The Herta",
             "imageUrl": "https://cdn.gameleap.com/images/articles/art_a5N1A1D78T/art-img_U54Xd-_7Y/1x.webp",
-            "description": "Esteemed member #83 of the Genius Society, human, female, young, beautiful, attractive (or that's how she describes herself). It's said that she lives in the far edge of the Cosmos, almost never leaving. She collaborated with Screwllum, Ruan Mei, and Stephen Lloyd to create the Simulated Universe, in order to research the mysterious nature of Aeons. She is also an Emanator of Nous the Erudition.",
-            "defeatMusic": "/music/spotidownloader.com - Geniuses in the Universe (From _Honkai_ Star Rail_) - The Herta Theme - tnbee-[AudioTrimmer.com].mp3"
+            "description": "Esteemed member #83 of the Genius Society, human, female, young, beautiful, attractive (or that's how she describes herself). It's said that she lives in the far edge of the Cosmos, almost never leaving. She collaborated with Screwllum, Ruan Mei, and Stephen Lloyd to create the Simulated Universe, in order to research the mysterious nature of Aeons. She is also an Emanator of Nous the Erudition. She has also made countless puppets of herself to control and monitor her Space Station without needing to be physically present (do they do tend to revolt against her)",
+            "defeatMusic": "/music/spotidownloader.com - Geniuses in the Universe (From _Honkai_ Star Rail_) - The Herta Theme - tnbee-[AudioTrimmer.com].mp3",
+            "defeatVideo": "/videos/TheHerta.mp4"
         },
         {
             "id": 8,
