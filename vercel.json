@@ -13,6 +13,7 @@
     }
   ],
   "env": {
-    "API_URL": "https://apiforcards-k9iu.vercel.app"
+    "API_URL": "https://apiforcards-k9iu.vercel.app",
+    "JWT_SECRET": "your-super-secret-key-here"
   }
 } 
