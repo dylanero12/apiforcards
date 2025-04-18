@@ -11,23 +11,16 @@ const app = express();
 const port = process.env.PORT || 3003;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-// Middleware to enable CORS
-const allowCors = fn => async (req, res) => {
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
-  );
+// Enable CORS for all routes
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
-  return await fn(req, res);
-};
+// Handle preflight requests
+app.options('*', cors());
 
 // Middleware to verify JWT token
 const authenticateToken = (req, res, next) => {
@@ -121,12 +114,25 @@ const saveUsers = (users) => {
 };
 
 // Signup endpoint
-app.post('/api/auth/signup', allowCors(async (req, res) => {
+app.post('/api/auth/signup', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    console.log('Received signup request with body:', req.body);
+    const { username, email, password, confirmPassword } = req.body;
     
-    if (!username || !password) {
-      return res.status(400).json({ message: 'Username and password are required' });
+    console.log('Extracted fields:', { username, email, password: '***', confirmPassword: '***' });
+    
+    if (!username || !email || !password || !confirmPassword) {
+      console.log('Missing fields:', {
+        username: !username,
+        email: !email,
+        password: !password,
+        confirmPassword: !confirmPassword
+      });
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: 'Passwords do not match' });
     }
 
     const users = loadUsers();
@@ -134,30 +140,50 @@ app.post('/api/auth/signup', allowCors(async (req, res) => {
       return res.status(400).json({ message: 'Username already exists' });
     }
 
+    if (users.some(user => user.email === email)) {
+      return res.status(400).json({ message: 'Email already exists' });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = {
       id: users.length + 1,
       username,
-      password: hashedPassword
+      email,
+      password: hashedPassword,
+      createdAt: new Date().toISOString()
     };
 
     users.push(newUser);
     saveUsers(users);
 
     const token = jwt.sign({ id: newUser.id, username: newUser.username }, JWT_SECRET);
-    res.json({ token });
+    res.json({ 
+      token,
+      user: {
+        id: newUser.id,
+        username: newUser.username,
+        email: newUser.email
+      }
+    });
   } catch (error) {
     console.error('Signup error:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
-}));
+});
 
 // Login endpoint
-app.post('/api/auth/login', allowCors(async (req, res) => {
+app.post('/api/auth/login', async (req, res) => {
   try {
+    console.log('Received login request with body:', req.body);
     const { username, password } = req.body;
     
+    console.log('Extracted fields:', { username, password: '***' });
+    
     if (!username || !password) {
+      console.log('Missing fields:', {
+        username: !username,
+        password: !password
+      });
       return res.status(400).json({ message: 'Username and password are required' });
     }
 
@@ -179,7 +205,7 @@ app.post('/api/auth/login', allowCors(async (req, res) => {
     console.error('Login error:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
-}));
+});
 
 // Protected health endpoint
 app.get('/health', authenticateToken, (req, res) => {
@@ -188,7 +214,7 @@ app.get('/health', authenticateToken, (req, res) => {
 });
 
 // Protected API routes
-app.get('/api/characters', authenticateToken, allowCors(async (req, res) => {
+app.get('/api/characters', authenticateToken, async (req, res) => {
     const characters = loadCharacters();
     const limit = parseInt(req.query.limit) || characters.length;
     const shuffledCharacters = shuffleArray([...characters]);
@@ -198,9 +224,9 @@ app.get('/api/characters', authenticateToken, allowCors(async (req, res) => {
     const charactersWithFullUrls = addFullUrls(result, req);
     
     res.json(charactersWithFullUrls);
-}));
+});
 
-app.get('/api/character/random', authenticateToken, allowCors(async (req, res) => {
+app.get('/api/character/random', authenticateToken, async (req, res) => {
     const characters = loadCharacters();
     const randomIndex = Math.floor(Math.random() * characters.length);
     const character = characters[randomIndex];
@@ -209,9 +235,9 @@ app.get('/api/character/random', authenticateToken, allowCors(async (req, res) =
     const characterWithFullUrls = addFullUrls([character], req)[0];
     
     res.json(characterWithFullUrls);
-}));
+});
 
-app.get('/api/character/:id', authenticateToken, allowCors(async (req, res) => {
+app.get('/api/character/:id', authenticateToken, async (req, res) => {
     const characters = loadCharacters();
     const character = characters.find(c => c.id === parseInt(req.params.id));
     if (!character) {
@@ -222,7 +248,7 @@ app.get('/api/character/:id', authenticateToken, allowCors(async (req, res) => {
     const characterWithFullUrls = addFullUrls([character], req)[0];
     
     res.json(characterWithFullUrls);
-}));
+});
 
 // Helper function to shuffle array
 const shuffleArray = (array) => {

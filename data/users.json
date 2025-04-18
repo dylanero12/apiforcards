@@ -1,3 +1,11 @@
 {
-    "users": []
-} 
+  "users": [
+    {
+      "id": 1,
+      "username": "dylanero12",
+      "email": "dylanero12@hotmail.com",
+      "password": "$2a$10$oomfOUmQZjb2V/LddqeI6uyhUwi5qaPy9wkol7oAk4J1jAgv2CWTe",
+      "createdAt": "2025-04-15T18:25:58.175Z"
+    }
+  ]
+}
