@@ -53,12 +53,6 @@ app.use('/music', express.static(path.join(__dirname, 'public/music'), {
   }
 }));
 
-
-app.use('/health', (req, res) => {
-  res.set('Content-Type', 'text/plain');
-  res.send('OK2');
-});
-
 app.use('/videos', express.static(path.join(__dirname, 'public/videos'), {
   setHeaders: (res, path) => {
     if (path.endsWith('.mp4')) {
@@ -68,11 +62,6 @@ app.use('/videos', express.static(path.join(__dirname, 'public/videos'), {
     }
   }
 }));
-
-app.use('/health', (req, res) => {
-  res.set('Content-Type', 'text/plain');
-  res.send('OK2');
-});
 
 // Load characters from JSON file
 const loadCharacters = () => {
@@ -205,12 +194,6 @@ app.post('/api/auth/login', async (req, res) => {
     console.error('Login error:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
-});
-
-// Protected health endpoint
-app.get('/health', authenticateToken, (req, res) => {
-  res.set('Content-Type', 'text/plain');
-  res.send('OK2');
 });
 
 // Protected API routes
