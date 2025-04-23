@@ -11,6 +11,22 @@ const app = express();
 const port = process.env.PORT || 3003;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
+// Determine data directory based on environment
+const DATA_DIR = path.join(__dirname, 'data');
+
+// Determine public directory based on environment
+const PUBLIC_DIR = path.join(__dirname, 'public');
+
+// Ensure data directory exists
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
+// Ensure public directory exists
+if (!fs.existsSync(PUBLIC_DIR)) {
+  fs.mkdirSync(PUBLIC_DIR, { recursive: true });
+}
+
 // Enable CORS for all routes
 app.use(cors({
   origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'],
@@ -41,10 +57,10 @@ const authenticateToken = (req, res, next) => {
 };
 
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(PUBLIC_DIR));
 
 // Add proper MIME type for MP3 files
-app.use('/music', express.static(path.join(__dirname, 'public/music'), {
+app.use('/music', express.static(path.join(PUBLIC_DIR, 'music'), {
   setHeaders: (res, path) => {
     if (path.endsWith('.mp3')) {
       res.set('Content-Type', 'audio/mpeg');
@@ -53,7 +69,7 @@ app.use('/music', express.static(path.join(__dirname, 'public/music'), {
   }
 }));
 
-app.use('/videos', express.static(path.join(__dirname, 'public/videos'), {
+app.use('/videos', express.static(path.join(PUBLIC_DIR, 'videos'), {
   setHeaders: (res, path) => {
     if (path.endsWith('.mp4')) {
       res.set('Content-Type', 'video/mp4');
@@ -65,9 +81,12 @@ app.use('/videos', express.static(path.join(__dirname, 'public/videos'), {
 
 // Load characters from JSON file
 const loadCharacters = () => {
-    const filePath = path.join(__dirname, 'data', 'characters.json');
+    const filePath = path.join(DATA_DIR, 'characters.json');
+    if (!fs.existsSync(filePath)) {
+        return [];
+    }
     const rawData = fs.readFileSync(filePath);
-    return JSON.parse(rawData).characters;
+    return JSON.parse(rawData).characters || [];
 };
 
 // Helper function to add full URLs to media paths
@@ -91,14 +110,17 @@ const addFullUrls = (characters, req) => {
 
 // Load users from JSON file
 const loadUsers = () => {
-  const filePath = path.join(__dirname, 'data', 'users.json');
+  const filePath = path.join(DATA_DIR, 'users.json');
+  if (!fs.existsSync(filePath)) {
+    return [];
+  }
   const rawData = fs.readFileSync(filePath);
-  return JSON.parse(rawData).users;
+  return JSON.parse(rawData).users || [];
 };
 
 // Save users to JSON file
 const saveUsers = (users) => {
-  const filePath = path.join(__dirname, 'data', 'users.json');
+  const filePath = path.join(DATA_DIR, 'users.json');
   fs.writeFileSync(filePath, JSON.stringify({ users }, null, 2));
 };
 
@@ -242,6 +264,11 @@ const shuffleArray = (array) => {
     return array;
 };
 
-app.listen(port, () => {
-    console.log(`Character Cards API running on port ${port}`);
-}); 
+// Only start the server if we're not in test mode
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(port, () => {
+        console.log(`Character Cards API running on port ${port}`);
+    });
+}
+
+module.exports = app; 

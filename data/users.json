@@ -2,10 +2,17 @@
   "users": [
     {
       "id": 1,
+      "username": "testuser",
+      "email": "test@example.com",
+      "password": "$2a$10$wNEAiDBOS5INHBJa0ehgLuHkVJZM7hWZ617imz4XPffAH/plmNKam",
+      "createdAt": "2025-04-22T20:14:09.190Z"
+    },
+    {
+      "id": 2,
       "username": "dylanero12",
       "email": "dylanero12@hotmail.com",
-      "password": "$2a$10$oomfOUmQZjb2V/LddqeI6uyhUwi5qaPy9wkol7oAk4J1jAgv2CWTe",
-      "createdAt": "2025-04-15T18:25:58.175Z"
+      "password": "$2a$10$Kp4hOXLlDLH/JEkgCsT4Fui1zbXMCPv85dbBqx/i8omGa.1MiVG7i",
+      "createdAt": "2025-04-22T20:18:12.559Z"
     }
   ]
 }
